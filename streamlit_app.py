@@ -238,14 +238,14 @@ def show_home_page():
     
     with col1:
         st.markdown("""
-        <div class="info-box">
+        <div class="dark-info-box">
         <h3>🔬 How does it work?</h3>
         <p>The application analyzes multiple health factors including age, medical history, lifestyle choices, and biometric data to assess your stroke risk. It uses advanced machine learning techniques including SMOTE for handling imbalanced data.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div class="info-box">
+        <div class="dark-info-box">
         <h3>⚡ Key Features</h3>
         <ul>
         <li>🫀 Personalized risk assessment</li>
@@ -523,7 +523,7 @@ def show_about_page():
     st.markdown('<h2 class="sub-header">About This Application</h2>', unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="info-box">
+    <div class="dark-info-box">
     <h3>🎯 Purpose</h3>
     <p>This application is designed to help individuals assess their stroke risk based on various health parameters. It serves as a screening tool and should not replace professional medical advice.</p>
     </div>
@@ -537,14 +537,14 @@ def show_about_page():
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="info-box">
+    <div class="dark-info-box">
     <h3>🔬 Technical Information</h3>
     <p>The model uses machine learning techniques including Random Forest classification and SMOTE for handling imbalanced data. The application is built with Streamlit for an interactive user experience.</p>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="info-box">
+    <div class="dark-info-box">
     <h3>📊 Data Sources</h3>
     <p>The model was trained on a comprehensive healthcare dataset containing various demographic, medical, and lifestyle factors associated with stroke risk.</p>
     </div>
