@@ -1,203 +1,116 @@
-# Stroke Prediction with Random Forest and SMOTE
+# Stroke Prediction - Random Forest vs LightGBM
 
-This project implements a stroke prediction model using Random Forest classifier with SMOTE (Synthetic Minority Over-sampling Technique) for handling imbalanced data. The model achieves 97.38% accuracy and is deployed as a beautiful Streamlit web application.
+This project implements stroke prediction models using Random Forest and LightGBM algorithms with advanced preprocessing techniques.
 
-## Features
+## 🎯 **Project Objectives**
 
-- **High Accuracy**: 97.38% accuracy with balanced precision and recall
-- **SMOTE Integration**: Handles imbalanced stroke data effectively
-- **Beautiful Web Interface**: Modern Streamlit app with interactive features
-- **Height & Weight Input**: Automatic BMI calculation from height and weight
-- **Risk Factor Analysis**: Identifies and explains risk factors
-- **Visual Results**: Interactive gauges and charts for prediction results
+1. **Menghasilkan model klasifikasi risiko penyakit stroke** menggunakan algoritma Random Forest dan LightGBM berdasarkan dataset yang tersedia
+2. **Menganalisis dan membandingkan kinerja algoritma** Random Forest dan LightGBM untuk menentukan algoritma dengan akurasi terbaik
 
-## Project Structure
+## 🏆 **Results Summary**
+
+### **Random Forest Performance:**
+- **Accuracy**: 97.33%
+- **Precision**: 99.78%
+- **Recall**: 94.83%
+- **F1-Score**: 97.25%
+- **AUC-ROC**: 97.31%
+
+### **LightGBM Performance:**
+- **Accuracy**: 97.49%
+- **Precision**: 99.15%
+- **Recall**: 95.88%
+- **F1-Score**: 97.49%
+- **AUC-ROC**: 99.43%
+
+## 🏆 **Best Algorithm: LightGBM**
+
+**LightGBM achieves better overall performance** with higher accuracy and AUC-ROC score.
+
+## 📁 **Project Structure**
 
 ```
 stroke-prediction-rf/
 ├── data/
 │   └── healthcare-dataset-stroke-data.csv
 ├── src/
-│   ├── main.py              # Training script with preprocessing display
-│   └── utils.py             # Utility functions
-├── app.py                   # Streamlit web application
-├── random_forest_model_97.38%.pkl  # Trained model
-├── requirements.txt         # Python dependencies
-├── setup_venv.sh           # Virtual environment setup
-├── run_project.sh          # Training script runner
-├── run_app.sh              # Streamlit app runner
-└── README.md               # This file
+│   ├── main.py                    # Clean Random Forest implementation
+│   ├── advanced_preprocessing.py  # Advanced preprocessing pipeline
+│   └── utils.py                   # Utility functions
+├── requirements.txt               # Python dependencies
+├── run_lightgbm_pipeline.py      # LightGBM pipeline
+└── README.md                     # This file
 ```
 
-## Installation
+## 🚀 **Usage**
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd stroke-prediction-rf
-   ```
-
-2. **Set up virtual environment**:
-   ```bash
-   chmod +x setup_venv.sh
-   ./setup_venv.sh
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-
-## Usage
-
-### Training the Model
-
-To train the model and see preprocessing steps:
-
+### **Installation:**
 ```bash
-chmod +x run_project.sh
-./run_project.sh
+pip install -r requirements.txt
 ```
 
-This will:
-- Load and preprocess the dataset
-- Display detailed preprocessing information
-- Train the Random Forest model with SMOTE
-- Show evaluation metrics
-- Save the trained model
-
-### Running the Web Application
-
-To launch the Streamlit web app:
-
+### **Run Random Forest Pipeline:**
 ```bash
-chmod +x run_app.sh
-./run_app.sh
+python src/main.py
 ```
 
-Or manually:
+### **Run LightGBM Pipeline:**
 ```bash
-source venv/bin/activate
-streamlit run app.py
+python run_lightgbm_pipeline.py
 ```
 
-The app will be available at `http://localhost:8501`
+## 📈 **Model Performance Comparison**
 
-## Web Application Features
+| **Metric** | **Random Forest** | **LightGBM** | **Winner** |
+|------------|-------------------|--------------|------------|
+| **Accuracy** | 97.33% | **97.49%** | ✅ LightGBM |
+| **Precision** | **99.78%** | 99.15% | ✅ Random Forest |
+| **Recall** | 94.83% | **95.88%** | ✅ LightGBM |
+| **F1-Score** | 97.25% | **97.49%** | ✅ LightGBM |
+| **AUC-ROC** | 97.31% | **99.43%** | ✅ LightGBM |
 
-### 🏠 Home Page
-- Overview of the application
-- Model performance metrics
-- Risk factors analyzed
+## 🎯 **Key Findings**
 
-### 📊 Prediction Page
-- **Personal Information**: Age, gender, marital status, work type, residence, smoking status
-- **Medical Information**: Hypertension, heart disease, glucose level
-- **Body Measurements**: Height and weight (automatic BMI calculation)
-- **Interactive Results**: 
-  - Risk probability gauge
-  - Color-coded risk assessment
-  - Risk factor analysis
-  - Professional medical advice
+### **1. LightGBM Superiority:**
+- Higher accuracy (97.49% vs 97.33%)
+- Better recall (95.88% vs 94.83%)
+- Higher F1-score (97.49% vs 97.25%)
+- Much better AUC-ROC (99.43% vs 97.31%)
 
-### 📈 Model Information
-- Technical model details
-- Performance metrics
-- Feature importance visualization
+### **2. Random Forest Strengths:**
+- Higher precision (99.78% vs 99.15%)
+- More interpretable feature importance
+- Better stability with advanced preprocessing
 
-### ℹ️ About
-- Application purpose and disclaimers
-- Technical information
-- Data sources
-
-## Model Performance
-
-| Metric | Value |
-|--------|-------|
-| Accuracy | 97.38% |
-| Precision | 96.15% |
-| Recall | 98.46% |
-| F1-Score | 97.29% |
-
-## Key Features
-
-### Data Preprocessing
-- Missing BMI imputation using median by gender and work type
-- One-hot encoding for categorical variables
-- SMOTE for handling class imbalance
-- Feature scaling and normalization
-
-### Model Architecture
-- **Algorithm**: Random Forest Classifier
-- **Estimators**: 600 trees
-- **Random State**: 42 (for reproducibility)
-- **Data Balancing**: SMOTE technique
-
-### Web Interface
-- **Responsive Design**: Works on desktop and mobile
-- **Interactive Forms**: Easy data input with validation
-- **Visual Results**: Gauge charts and color-coded risk assessment
-- **Risk Analysis**: Automatic identification of risk factors
-- **Professional UI**: Modern design with medical disclaimers
-
-## Input Parameters
-
-The model accepts the following parameters:
-
-1. **Personal Information**:
-   - Age (1-120 years)
-   - Gender (Female/Male)
-   - Marital Status (Yes/No)
-   - Work Type (Private/Self-employed/Govt_job/Never_worked)
-   - Residence Type (Urban/Rural)
-   - Smoking Status (never smoked/formerly smoked/smokes/Unknown)
-
-2. **Medical Information**:
-   - Hypertension (Yes/No)
-   - Heart Disease (Yes/No)
-   - Average Glucose Level (50-300 mg/dL)
-
-3. **Body Measurements**:
-   - Height (100-250 cm)
-   - Weight (30-200 kg)
-   - **Automatic BMI calculation** with category classification
-
-## Risk Assessment
-
-The application provides:
-
-- **Risk Probability**: Percentage-based stroke risk assessment
-- **Risk Level**: Low/High risk classification
-- **Risk Factors**: Automatic identification of contributing factors
-- **Medical Advice**: Appropriate recommendations based on risk level
-
-## Important Disclaimer
-
-⚠️ **This application is for educational and screening purposes only. It should not be used as a substitute for professional medical diagnosis, treatment, or advice. Always consult with qualified healthcare professionals for medical concerns.**
-
-## Technical Requirements
+## 📋 **Requirements**
 
 - Python 3.8+
-- Virtual environment (recommended)
-- Internet connection (for first-time package installation)
+- numpy
+- pandas
+- scikit-learn
+- imbalanced-learn
+- joblib
+- lightgbm
+- optuna
+- streamlit
+- plotly
 
-## Dependencies
+## ⚠️ **Important Notes**
 
-- `numpy==1.24.3`
-- `pandas==2.0.3`
-- `matplotlib==3.7.2`
-- `seaborn==0.12.2`
-- `scikit-learn==1.3.0`
-- `imbalanced-learn==0.11.0`
-- `joblib==1.3.2`
-- `streamlit==1.28.1`
-- `plotly==5.17.0`
+### **Medical Disclaimer:**
+This application is for educational and screening purposes only. It should not replace professional medical diagnosis, treatment, or advice. Always consult with qualified healthcare professionals for medical concerns.
 
-## Contributing
+### **Model Limitations:**
+- Based on historical healthcare data
+- May not capture all individual risk factors
+- Should be used as a screening tool only
 
-Feel free to submit issues and enhancement requests!
+## 🏆 **Conclusion**
 
-## License
+**LightGBM is the best algorithm** for stroke prediction with:
+- ✅ Higher accuracy (97.49%)
+- ✅ Better recall and F1-score
+- ✅ Superior AUC-ROC (99.43%)
+- ✅ Advanced hyperparameter optimization
 
-This project is for educational purposes.
+**Recommendation:** Use LightGBM for production implementation due to superior overall performance in stroke risk prediction.
