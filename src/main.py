@@ -42,6 +42,11 @@ class StrokeDataPreprocessor:
         
         self.data = pd.read_csv(filepath)
         
+        # Drop the 'id' column as it's not useful for prediction
+        if 'id' in self.data.columns:
+            self.data.drop('id', axis=1, inplace=True)
+            print("🗑️  Dropped 'id' column as it's not useful for prediction")
+        
         print(f"📊 Dataset Shape: {self.data.shape}")
         print(f"📋 Columns: {list(self.data.columns)}")
         print(f"📈 Data Types:\n{self.data.dtypes}")
@@ -184,13 +189,28 @@ class StrokeDataPreprocessor:
                                               bins=[0, 100, 125, 200, 1000],
                                               labels=['Normal', 'Prediabetes', 'Diabetes', 'Very High'])
         
-        # Create risk score
+        # Create enhanced risk score with more factors
         risk_factors = 0
-        risk_factors += (self.data['age'] > 65).astype(int)
-        risk_factors += self.data['hypertension']
-        risk_factors += self.data['heart_disease']
-        risk_factors += (self.data['avg_glucose_level'] > 140).astype(int)
-        risk_factors += (self.data['bmi'] > 30).astype(int)
+        # Age factors (more granular)
+        risk_factors += (self.data['age'] > 65).astype(int) * 2  # Elderly gets 2 points
+        risk_factors += (self.data['age'] > 75).astype(int) * 1  # Very elderly gets extra point
+        
+        # Medical conditions
+        risk_factors += self.data['hypertension'] * 2  # Hypertension gets 2 points
+        risk_factors += self.data['heart_disease'] * 2  # Heart disease gets 2 points
+        
+        # Glucose levels (more granular)
+        risk_factors += (self.data['avg_glucose_level'] > 140).astype(int) * 1  # High glucose
+        risk_factors += (self.data['avg_glucose_level'] > 200).astype(int) * 1  # Very high glucose
+        
+        # BMI factors (more granular)
+        risk_factors += (self.data['bmi'] > 30).astype(int) * 1  # Obese
+        risk_factors += (self.data['bmi'] > 40).astype(int) * 1  # Severely obese
+        
+        # Smoking status
+        risk_factors += (self.data['smoking_status'] == 'smokes').astype(int) * 1
+        risk_factors += (self.data['smoking_status'] == 'formerly smoked').astype(int) * 1
+        
         self.data['risk_score'] = risk_factors
         
         print("🔧 New features created:")
@@ -441,10 +461,10 @@ class StrokeDataPreprocessor:
         print("=" * 80)
         
         # Create filename with accuracy
-        model_filename = f"random_forest_model_{accuracy*100:.2f}%.pkl"
-        scaler_filename = f"scaler_{accuracy*100:.2f}%.pkl"
-        encoder_filename = f"encoder_{accuracy*100:.2f}%.pkl"
-        feature_selector_filename = f"feature_selector_{accuracy*100:.2f}%.pkl"
+        model_filename = f"models/random_forest_model_{accuracy*100:.2f}%.pkl"
+        scaler_filename = f"models/scaler_{accuracy*100:.2f}%.pkl"
+        encoder_filename = f"models/encoder_{accuracy*100:.2f}%.pkl"
+        feature_selector_filename = f"models/feature_selector_{accuracy*100:.2f}%.pkl"
         
         # Save model and preprocessors
         joblib.dump(self.model, model_filename)

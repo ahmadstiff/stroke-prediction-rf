@@ -1,152 +1,103 @@
-# 🧠 Stroke Prediction with Random Forest and LightGBM
+# 🧠 Stroke Prediction Analysis Dashboard
 
-A comprehensive machine learning project for stroke prediction using Random Forest and LightGBM algorithms with advanced preprocessing and hyperparameter optimization.
+A comprehensive machine learning project for stroke prediction using Random Forest algorithm with advanced preprocessing and feature engineering.
 
-## 📊 **Project Overview**
+## 📊 Project Overview
 
-This project implements two different machine learning approaches for stroke prediction:
-- **Random Forest** (Ensemble Learning) - 97.31% accuracy
-- **LightGBM** (Gradient Boosting) - 97.48% accuracy
+This project implements a stroke prediction model with the following key features:
 
-## 🎯 **Key Results**
+- **Algorithm**: Random Forest Classifier
+- **Accuracy**: 97.79%
+- **AUC-ROC**: 99.58%
+- **Precision**: 99.47%
+- **Recall**: 96.09%
 
-| Metric | Random Forest | LightGBM | Improvement |
-|--------|---------------|----------|-------------|
-| **Accuracy** | 97.31% | 97.48% | +0.17% |
-| **Precision** | 97.25% | 99.15% | +1.90% |
-| **Recall** | 94.83% | 95.78% | +0.95% |
-| **F1-Score** | 97.25% | 97.44% | +0.19% |
-| **AUC-ROC** | 97.31% | 99.41% | +2.10% |
-
-## 📁 **Project Structure**
+## 🏗️ Project Structure
 
 ```
 stroke-prediction-rf/
+├── app.py                          # Streamlit web application
+├── src/
+│   ├── main.py                     # Main training pipeline
+│   ├── utils.py                    # Utility functions
+│   └── lightgbm_main_direct.py    # LightGBM implementation (reference)
+├── models/                         # Trained models and preprocessors
+│   ├── random_forest_model_97.79%.pkl
+│   ├── scaler_97.79%.pkl
+│   ├── encoder_97.79%.pkl
+│   └── feature_selector_97.79%.pkl
 ├── data/
 │   └── healthcare-dataset-stroke-data.csv
-├── src/
-│   ├── main.py                    # Random Forest implementation
-│   └── lightgbm_main_direct.py   # LightGBM implementation
-├── requirements.txt               # Python dependencies
-├── README.md                     # This file
-├── DOCUMENTATION.md              # Comprehensive documentation
-├── TECHNICAL_ANALYSIS.md         # Detailed technical analysis
-└── EXECUTIVE_SUMMARY.md          # Executive summary
+├── requirements.txt
+└── README.md
 ```
 
-## 🚀 **Quick Start**
+## 🚀 Quick Start
 
-### **Installation**
+### 1. Install Dependencies
 ```bash
-# Clone repository
-git clone <repository-url>
-cd stroke-prediction-rf
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### **Run Random Forest**
+### 2. Run the Application
 ```bash
-python src/main.py
+streamlit run app.py
 ```
 
-### **Run LightGBM**
-```bash
-python src/lightgbm_main_direct.py
-```
+The application will be available at `http://localhost:8501`
 
-## 🔧 **Features**
+## 🔧 Model Features
 
-### **Advanced Preprocessing Pipeline**
-1. **Data Loading** - Comprehensive data exploration
-2. **Target Analysis** - Class imbalance detection
-3. **Missing Values** - Group-based imputation for BMI
-4. **Outlier Detection** - IQR method for numerical features
-5. **Feature Engineering** - Risk score, age groups, BMI categories
-6. **Encoding** - One-Hot Encoding for categorical variables
-7. **Feature Selection** - SelectKBest (k=15) for feature selection
-8. **SMOTE Balancing** - Class imbalance handling
-9. **Data Splitting** - Stratified train/test split
-10. **Scaling** - RobustScaler for normalization
-11. **Hyperparameter Tuning** - GridSearchCV (RF) vs Optuna (LightGBM)
-12. **Model Training** - Cross-validation training
-13. **Evaluation** - Multiple metrics evaluation
-14. **Model Saving** - Complete model persistence
+### Enhanced Risk Score Calculation (0-12 points):
+- **Age > 65**: 2 points
+- **Age > 75**: 1 additional point
+- **Hypertension**: 2 points
+- **Heart Disease**: 2 points
+- **Glucose > 140**: 1 point
+- **Glucose > 200**: 1 additional point
+- **BMI > 30**: 1 point
+- **BMI > 40**: 1 additional point
+- **Smoking**: 1 point
 
-### **Key Features**
-- ✅ **Consistent Pipeline** - Same preprocessing for both algorithms
-- ✅ **Advanced Optimization** - Optuna Bayesian optimization for LightGBM
-- ✅ **Medical Domain Knowledge** - Risk score based on medical thresholds
-- ✅ **Comprehensive Evaluation** - Multiple metrics and feature importance
-- ✅ **Production Ready** - Complete model persistence and error handling
+### Risk Assessment Thresholds:
+- **🔴 VERY HIGH RISK**: ≥50%
+- **🟠 HIGH RISK**: ≥35%
+- **🟡 MODERATE RISK**: ≥20%
+- **🟢 LOW RISK**: ≥10%
 
-## 📈 **Performance Analysis**
+## 📈 Model Performance
 
-### **Feature Importance (Top 5)**
+| Metric | Value |
+|--------|-------|
+| Accuracy | 97.79% |
+| Precision | 99.47% |
+| Recall | 96.09% |
+| F1-Score | 97.75% |
+| AUC-ROC | 99.58% |
 
-#### **Random Forest:**
-1. `age` (28.4%) - Age is the most important factor
-2. `avg_glucose_level` (18.3%) - Glucose level
-3. `bmi` (14.2%) - Body mass index
-4. `hypertension` (12.1%) - Hypertension
-5. `heart_disease` (8.9%) - Heart disease
+## 🎯 Key Features
 
-#### **LightGBM:**
-1. `age` (41.3%) - Age remains most important
-2. `risk_score` (9.6%) - Composite risk score
-3. `gender_Male` (9.2%) - Male gender
-4. `Residence_type_Urban` (8.6%) - Urban residence
-5. `avg_glucose_level` (7.5%) - Glucose level
+### 1. Advanced Preprocessing Pipeline
+- Missing value imputation with group-based approach
+- Outlier detection and handling
+- Feature engineering with risk score calculation
+- SMOTE balancing for class imbalance
 
-## 📚 **Documentation**
+### 2. Feature Selection
+- SelectKBest with f_classif (k=15)
+- Optimized feature set for maximum performance
 
-### **Available Documentation Files:**
+### 3. Hyperparameter Tuning
+- GridSearchCV for Random Forest optimization
+- Cross-validation for robust evaluation
 
-1. **📋 EXECUTIVE_SUMMARY.md** - High-level overview and key findings
-2. **📊 DOCUMENTATION.md** - Comprehensive analysis and comparison
-3. **🔬 TECHNICAL_ANALYSIS.md** - Detailed technical implementation analysis
+### 4. Interactive Web Interface
+- Real-time stroke risk prediction
+- Detailed risk factor analysis
+- Visual performance metrics
+- Comprehensive documentation
 
-### **Documentation Highlights:**
-- **Code Quality Assessment** - Modularity, readability, maintainability
-- **Performance Comparison** - Statistical significance analysis
-- **Best Practices Implementation** - Industry standards followed
-- **Production Recommendations** - Deployment and monitoring guidance
-
-## 🎯 **Key Findings**
-
-### **LightGBM Advantages:**
-- ✅ **Superior Performance** - Better accuracy and precision
-- ✅ **Advanced Optimization** - Optuna Bayesian optimization
-- ✅ **Efficient Training** - Early stopping and faster convergence
-- ✅ **Medical Grade** - 99.41% AUC-ROC suitable for medical diagnosis
-
-### **Random Forest Advantages:**
-- ✅ **Robust** - Less prone to overfitting
-- ✅ **Interpretable** - Clear feature importance
-- ✅ **Stable** - Consistent performance
-- ✅ **Parallel** - Can utilize all CPU cores
-
-## 🚀 **Production Recommendations**
-
-### **Immediate Actions:**
-1. **Deploy LightGBM** - Use for production (superior performance)
-2. **API Development** - Build REST API for real-time predictions
-3. **Monitoring System** - Implement performance tracking
-4. **Regular Retraining** - Schedule model updates
-
-### **Technical Improvements:**
-1. **Error Handling** - Add robust try-catch blocks
-2. **Logging** - Implement comprehensive logging
-3. **Unit Testing** - Add reliability tests
-4. **Configuration** - External config files
-5. **Model Versioning** - Version control for models
-
-## 📊 **Dataset Information**
+## 🔍 Dataset Information
 
 - **Source**: Healthcare Dataset Stroke Data
 - **Size**: 5,110 samples
@@ -154,58 +105,41 @@ python src/lightgbm_main_direct.py
 - **Target**: Binary classification (stroke/no stroke)
 - **Class Imbalance**: 95.13% no stroke, 4.87% stroke
 
-## 🔧 **Technical Stack**
+## 📋 Usage
 
-- **Python**: 3.8+
-- **Machine Learning**: scikit-learn, LightGBM, Optuna
-- **Data Processing**: pandas, numpy
-- **Visualization**: matplotlib, seaborn, plotly
-- **Imbalanced Learning**: imbalanced-learn
-- **Model Persistence**: joblib
+1. **Navigate to Prediction Page**: Click "🔮 Predict Stroke" in the sidebar
+2. **Enter Patient Data**: Fill in all required fields
+3. **Get Prediction**: Click "🔮 Predict Stroke Risk" button
+4. **Review Results**: View risk assessment and detailed analysis
 
-## 📝 **Usage Examples**
+## 🛠️ Technical Stack
 
-### **Running Random Forest:**
-```bash
-python src/main.py
-```
+- **Python 3.8+**
+- **scikit-learn**: Machine learning algorithms
+- **pandas, numpy**: Data manipulation
+- **streamlit**: Web application framework
+- **plotly**: Interactive visualizations
+- **imbalanced-learn**: SMOTE balancing
+- **joblib**: Model persistence
 
-### **Running LightGBM:**
-```bash
-python src/lightgbm_main_direct.py
-```
+## 📚 Documentation
 
-### **Expected Output:**
-```
-================================================================================
-🔍 STEP 1: DATA LOADING AND INITIAL EXPLORATION
-================================================================================
-📊 Dataset Shape: (5110, 12)
-📋 Columns: ['id', 'gender', 'age', 'hypertension', 'heart_disease', ...]
-...
-🎉 PIPELINE COMPLETED SUCCESSFULLY!
-================================================================================
-⏱️  Total execution time: 385.65 seconds
-📁 Model saved as: lightgbm_model_97.48%.pkl
-================================================================================
-```
+- `ANALISIS_KODE_PROGRAM.md`: Comprehensive code analysis
+- `ANALISIS_TEKNIS_DETAIL.md`: Technical deep dive
+- `RINGKASAN_EKSEKUTIF.md`: Executive summary
+- `PROJECT_SUMMARY.md`: Project overview
 
-## 🤝 **Contributing**
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Submit a pull request
 
-## 📄 **License**
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 **Contact**
-
-For questions or support, please open an issue in the repository.
+This project is licensed under the MIT License.
 
 ---
 
-*This project demonstrates advanced machine learning techniques for medical diagnosis with comprehensive preprocessing, hyperparameter optimization, and production-ready implementation.*
+**Note**: This model is for educational and research purposes. For medical diagnosis, always consult healthcare professionals.

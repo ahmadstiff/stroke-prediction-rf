@@ -118,11 +118,13 @@ def main():
     st.sidebar.title("📊 Navigation")
     page = st.sidebar.selectbox(
         "Choose a page:",
-        ["🏠 Home", "📈 Model Performance", "🔍 Feature Analysis", "🤖 Model Comparison", "📋 Documentation"]
+        ["🏠 Home", "🔮 Predict Stroke", "📈 Model Performance", "🔍 Feature Analysis", "🤖 Model Comparison", "📋 Documentation"]
     )
     
     if page == "🏠 Home":
         show_home_page()
+    elif page == "🔮 Predict Stroke":
+        show_prediction_page()
     elif page == "📈 Model Performance":
         show_performance_page()
     elif page == "🔍 Feature Analysis":
@@ -171,9 +173,9 @@ def show_home_page():
         st.markdown("""
         <div class="metric-card success-metric">
             <h3>Random Forest</h3>
-            <p><strong>Accuracy:</strong> 97.74%</p>
-            <p><strong>AUC-ROC:</strong> 99.61%</p>
-            <p><strong>Precision:</strong> 99.57%</p>
+            <p><strong>Accuracy:</strong> 97.79%</p>
+            <p><strong>AUC-ROC:</strong> 99.58%</p>
+            <p><strong>Precision:</strong> 99.47%</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -545,6 +547,287 @@ def show_documentation_page():
         - Model persistence
         - Production-ready code
         """)
+
+def show_prediction_page():
+    st.markdown("## 🔮 Stroke Prediction Tool")
+    st.markdown("### 🎯 Try Our Best Model (Random Forest)")
+    
+    # Load the best model
+    try:
+        model = joblib.load('models/random_forest_model_97.79%.pkl')
+        scaler = joblib.load('models/scaler_97.79%.pkl')
+        encoder = joblib.load('models/encoder_97.79%.pkl')
+        feature_selector = joblib.load('models/feature_selector_97.79%.pkl')
+        
+        st.success("✅ Model loaded successfully!")
+        
+    except Exception as e:
+        st.error(f"❌ Error loading model: {str(e)}")
+        st.info("Please ensure the model files are in the current directory")
+        return
+    
+    # Input form
+    st.markdown("### 📝 Enter Patient Information")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 👤 Demographics")
+        age = st.slider("Age", 0, 100, 50)
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        work_type = st.selectbox("Work Type", ["Private", "Self-employed", "Govt_job", "children", "Never_worked"])
+        residence_type = st.selectbox("Residence Type", ["Urban", "Rural"])
+        
+        st.markdown("#### 🏥 Medical History")
+        hypertension = st.checkbox("Hypertension")
+        heart_disease = st.checkbox("Heart Disease")
+        ever_married = st.selectbox("Ever Married", ["Yes", "No"])
+        
+    with col2:
+        st.markdown("#### 📊 Health Metrics")
+        avg_glucose_level = st.slider("Average Glucose Level", 50.0, 300.0, 100.0, 0.1)
+        
+        # Weight and Height inputs
+        st.markdown("#### ⚖️ Body Measurements")
+        weight_kg = st.slider("Weight (kg)", 30.0, 200.0, 70.0, 0.1)
+        height_cm = st.slider("Height (cm)", 100.0, 250.0, 170.0, 0.1)
+        
+        # Calculate BMI automatically
+        height_m = height_cm / 100
+        bmi = weight_kg / (height_m ** 2)
+        
+        # Display calculated BMI
+        st.markdown(f"**📊 Calculated BMI:** {bmi:.1f} kg/m²")
+        
+        smoking_status = st.selectbox("Smoking Status", ["formerly smoked", "never smoked", "smokes", "Unknown"])
+        
+        st.markdown("#### 📈 Additional Info")
+        # Calculate risk factors (matching main.py categories)
+        if age < 30:
+            age_group = "Young"
+        elif age < 45:
+            age_group = "Adult"
+        elif age < 60:
+            age_group = "Middle-aged"
+        elif age < 75:
+            age_group = "Senior"
+        else:
+            age_group = "Elderly"
+            
+        if bmi < 18.5:
+            bmi_category = "Underweight"
+        elif bmi < 25:
+            bmi_category = "Normal"
+        elif bmi < 30:
+            bmi_category = "Overweight"
+        else:
+            bmi_category = "Obese"
+            
+        if avg_glucose_level < 100:
+            glucose_category = "Normal"
+        elif avg_glucose_level < 125:
+            glucose_category = "Prediabetes"
+        elif avg_glucose_level < 200:
+            glucose_category = "Diabetes"
+        else:
+            glucose_category = "Very High"
+        
+        # Display calculated categories
+        st.info(f"**Age Group:** {age_group}")
+        st.info(f"**BMI Category:** {bmi_category}")
+        st.info(f"**Glucose Category:** {glucose_category}")
+        
+        # Additional body measurements info
+        st.info(f"**Weight:** {weight_kg:.1f} kg")
+        st.info(f"**Height:** {height_cm:.1f} cm")
+    
+    # Enhanced risk score calculation (matching training pipeline)
+    risk_score = 0
+    # Age factors
+    if age > 65: risk_score += 2
+    if age > 75: risk_score += 1
+    # Medical conditions
+    if hypertension: risk_score += 2
+    if heart_disease: risk_score += 2
+    # Glucose levels
+    if avg_glucose_level > 140: risk_score += 1
+    if avg_glucose_level > 200: risk_score += 1
+    # BMI factors
+    if bmi > 30: risk_score += 1
+    if bmi > 40: risk_score += 1
+    # Smoking status
+    if smoking_status in ["smokes", "formerly smoked"]: risk_score += 1
+    
+    st.markdown(f"### ⚠️ Calculated Risk Score: {risk_score}/12")
+    
+    # Prediction button
+    if st.button("🔮 Predict Stroke Risk", type="primary"):
+        with st.spinner("Analyzing patient data..."):
+            try:
+                # Prepare input data exactly as the model expects (without id column)
+                input_data = {
+                    'gender': [gender],
+                    'age': [age],
+                    'hypertension': [1 if hypertension else 0],
+                    'heart_disease': [1 if heart_disease else 0],
+                    'ever_married': [ever_married],
+                    'work_type': [work_type],
+                    'Residence_type': [residence_type],
+                    'avg_glucose_level': [avg_glucose_level],
+                    'bmi': [bmi],  # Calculated from weight and height
+                    'smoking_status': [smoking_status]
+                }
+                
+                # Create DataFrame
+                df_input = pd.DataFrame(input_data)
+                
+                # Calculate enhanced risk score exactly as in training pipeline
+                risk_factors = 0
+                # Age factors (more granular)
+                risk_factors += (df_input['age'] > 65).astype(int) * 2  # Elderly gets 2 points
+                risk_factors += (df_input['age'] > 75).astype(int) * 1  # Very elderly gets extra point
+                
+                # Medical conditions
+                risk_factors += df_input['hypertension'] * 2  # Hypertension gets 2 points
+                risk_factors += df_input['heart_disease'] * 2  # Heart disease gets 2 points
+                
+                # Glucose levels (more granular)
+                risk_factors += (df_input['avg_glucose_level'] > 140).astype(int) * 1  # High glucose
+                risk_factors += (df_input['avg_glucose_level'] > 200).astype(int) * 1  # Very high glucose
+                
+                # BMI factors (more granular)
+                risk_factors += (df_input['bmi'] > 30).astype(int) * 1  # Obese
+                risk_factors += (df_input['bmi'] > 40).astype(int) * 1  # Severely obese
+                
+                # Smoking status
+                risk_factors += (df_input['smoking_status'] == 'smokes').astype(int) * 1
+                risk_factors += (df_input['smoking_status'] == 'formerly smoked').astype(int) * 1
+                
+                df_input['risk_score'] = risk_factors
+                
+                # Apply one-hot encoding to categorical variables
+                categorical_cols = ['gender', 'ever_married', 'work_type', 'Residence_type', 'smoking_status']
+                encoded_data = encoder.transform(df_input[categorical_cols])
+                encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(categorical_cols))
+                
+                # Combine with numerical features (without id column)
+                numerical_cols = ['age', 'hypertension', 'heart_disease', 'avg_glucose_level', 'bmi', 'risk_score']
+                final_df = pd.concat([df_input[numerical_cols].reset_index(drop=True), 
+                                    encoded_df.reset_index(drop=True)], axis=1)
+                
+                # Apply feature selection
+                selected_features = feature_selector.transform(final_df)
+                
+                # Apply scaling
+                scaled_features = scaler.transform(selected_features)
+                
+                # 6. Prediction
+                prediction = model.predict(scaled_features)[0]
+                prediction_proba = model.predict_proba(scaled_features)[0]
+                
+                # Display results
+                st.markdown("## 🎯 Prediction Results")
+                
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    if prediction == 1:
+                        st.error("🚨 **HIGH RISK** - Stroke Likely")
+                    else:
+                        st.success("✅ **LOW RISK** - No Stroke")
+                
+                with col2:
+                    stroke_prob = prediction_proba[1] * 100
+                    st.metric("Stroke Probability", f"{stroke_prob:.2f}%")
+                
+                with col3:
+                    no_stroke_prob = prediction_proba[0] * 100
+                    st.metric("No Stroke Probability", f"{no_stroke_prob:.2f}%")
+                
+                # Risk assessment with adjusted thresholds
+                st.markdown("### 📊 Risk Assessment")
+                
+                if stroke_prob >= 50:
+                    risk_level = "🔴 **VERY HIGH RISK**"
+                    recommendation = "Immediate medical consultation recommended"
+                elif stroke_prob >= 35:
+                    risk_level = "🟠 **HIGH RISK**"
+                    recommendation = "Medical consultation advised within 1 week"
+                elif stroke_prob >= 20:
+                    risk_level = "🟡 **MODERATE RISK**"
+                    recommendation = "Regular health monitoring recommended"
+                elif stroke_prob >= 10:
+                    risk_level = "🟢 **LOW RISK**"
+                    recommendation = "Maintain healthy lifestyle"
+                else:
+                    risk_level = "🟢 **VERY LOW RISK**"
+                    recommendation = "Continue healthy lifestyle"
+                
+                st.markdown(f"**Risk Level:** {risk_level}")
+                st.markdown(f"**Recommendation:** {recommendation}")
+                st.markdown(f"**Risk Score:** {risk_score}/5")
+                
+                # Feature importance for this prediction
+                st.markdown("### 🔍 Key Factors Influencing This Prediction")
+                
+                # Get feature importance for this specific case
+                feature_names = feature_selector.get_feature_names_out()
+                importances = model.feature_importances_
+                
+                # Create feature importance DataFrame
+                importance_df = pd.DataFrame({
+                    'Feature': feature_names,
+                    'Importance': importances
+                }).sort_values('Importance', ascending=False).head(10)
+                
+                # Plot feature importance
+                fig = px.bar(importance_df, x='Importance', y='Feature', 
+                           orientation='h', title="Top 10 Most Important Features")
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Detailed analysis
+                st.markdown("### 📋 Detailed Analysis")
+                
+                analysis_points = []
+                if age > 65:
+                    analysis_points.append("• **Age Factor**: Elderly age (>65) increases stroke risk")
+                if hypertension:
+                    analysis_points.append("• **Hypertension**: Major risk factor for stroke")
+                if heart_disease:
+                    analysis_points.append("• **Heart Disease**: Significant cardiovascular risk factor")
+                if bmi > 30:
+                    analysis_points.append("• **BMI**: Obesity increases stroke risk")
+                if avg_glucose_level > 140:
+                    analysis_points.append("• **Glucose**: High glucose levels indicate diabetes risk")
+                if smoking_status in ["smokes", "formerly smoked"]:
+                    analysis_points.append("• **Smoking**: Tobacco use increases stroke risk")
+                
+                # Add body measurements analysis
+                st.markdown("#### 📏 Body Measurements Analysis")
+                st.markdown(f"• **Weight**: {weight_kg:.1f} kg")
+                st.markdown(f"• **Height**: {height_cm:.1f} cm")
+                st.markdown(f"• **BMI**: {bmi:.1f} kg/m² ({bmi_category})")
+                
+                # BMI-specific recommendations
+                if bmi > 30:
+                    st.warning("⚠️ **Obesity Alert**: High BMI indicates increased stroke risk. Consider weight management.")
+                elif bmi > 25:
+                    st.info("ℹ️ **Overweight**: Moderate BMI. Regular exercise recommended.")
+                elif bmi > 18.5:
+                    st.success("✅ **Normal BMI**: Healthy weight range.")
+                else:
+                    st.warning("⚠️ **Underweight**: Low BMI may indicate health issues.")
+                
+                if analysis_points:
+                    st.markdown("**Risk Factors Identified:**")
+                    for point in analysis_points:
+                        st.markdown(point)
+                else:
+                    st.success("✅ No major risk factors identified")
+                
+            except Exception as e:
+                st.error(f"❌ Prediction error: {str(e)}")
+                st.info("Please check your input data and try again")
 
 if __name__ == "__main__":
     main() 
