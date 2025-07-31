@@ -479,6 +479,41 @@ def show_model_comparison_page():
 def show_documentation_page():
     st.markdown("## 📋 Documentation")
     
+    # GitHub repository link
+    st.markdown("### 🔗 GitHub Repository")
+    st.markdown("""
+    **📂 Project Repository:** [Stroke Prediction Analysis](https://github.com/yourusername/stroke-prediction-rf)
+    
+    **🔧 Source Code:** All code, models, and documentation are available on GitHub
+    **📊 Dataset:** Healthcare Dataset Stroke Data included in the repository
+    **📝 Documentation:** Complete documentation and analysis files
+    """)
+    
+    # Repository features
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **📁 Repository Structure:**
+        - `app.py` - Streamlit web application
+        - `src/main.py` - Main training pipeline
+        - `models/` - Trained model files
+        - `data/` - Dataset files
+        - `*.md` - Documentation files
+        """)
+    
+    with col2:
+        st.markdown("""
+        **🚀 Key Features:**
+        - Complete source code
+        - Pre-trained models
+        - Comprehensive documentation
+        - Ready for deployment
+        - Open source project
+        """)
+    
+    st.markdown("---")
+    
     st.markdown("### 📚 Available Documentation Files")
     
     documentation_files = {
@@ -547,6 +582,50 @@ def show_documentation_page():
         - Model persistence
         - Production-ready code
         """)
+    
+    # Contributing and license information
+    st.markdown("### 🤝 Contributing")
+    st.markdown("""
+    **📝 How to Contribute:**
+    1. Fork the repository on GitHub
+    2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+    3. Commit your changes (`git commit -m 'Add amazing feature'`)
+    4. Push to the branch (`git push origin feature/amazing-feature`)
+    5. Open a Pull Request
+    
+    **🐛 Report Issues:** Create an issue on GitHub for bugs or feature requests
+    **💡 Suggest Improvements:** Open discussions for new ideas
+    **📚 Documentation:** Help improve documentation and examples
+    """)
+    
+    # License information
+    st.markdown("### 📄 License")
+    st.markdown("""
+    **MIT License** - This project is licensed under the MIT License.
+    
+    **📋 License Terms:**
+    - ✅ Free to use for commercial and non-commercial purposes
+    - ✅ Free to modify and distribute
+    - ✅ Free to use for private and public projects
+    - ✅ Attribution is appreciated but not required
+    
+    **⚠️ Disclaimer:** This model is for educational and research purposes. 
+    For medical diagnosis, always consult healthcare professionals.
+    """)
+    
+    # Contact information
+    st.markdown("### 📞 Contact")
+    st.markdown("""
+    **📧 Questions or Support:**
+    - Open an issue on GitHub
+    - Create a discussion for general questions
+    - Contact the maintainers through GitHub
+    
+    **🔗 Links:**
+    - [GitHub Repository](https://github.com/yourusername/stroke-prediction-rf)
+    - [Issues](https://github.com/yourusername/stroke-prediction-rf/issues)
+    - [Discussions](https://github.com/yourusername/stroke-prediction-rf/discussions)
+    """)
 
 def show_prediction_page():
     st.markdown("## 🔮 Stroke Prediction Tool")
